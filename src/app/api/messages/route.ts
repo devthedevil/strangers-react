@@ -3,7 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { dbConnect } from "@/lib/db";
 import Message from "@/models/Message";
-import { pusherServer } from "@/lib/pusher";
+import { getPusherServer } from "@/lib/pusher";
 
 const SendSchema = z.object({
   chatroomId: z.string().min(1),
@@ -41,6 +41,6 @@ export async function POST(req: NextRequest) {
     to: parsed.data.to,
   });
   const populated = await Message.findById(created._id).populate("from", "name avatarUrl").lean();
-  await pusherServer.trigger(`presence-${parsed.data.chatroomId}`, "new-message", populated);
+  await getPusherServer().trigger(`presence-${parsed.data.chatroomId}`, "new-message", populated);
   return NextResponse.json({ message: populated }, { status: 201 });
 }

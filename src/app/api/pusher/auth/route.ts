@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { pusherServer } from "@/lib/pusher";
+import { getPusherServer } from "@/lib/pusher";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -13,6 +13,6 @@ export async function POST(req: NextRequest) {
     user_id: userId,
     user_info: { name: session.user.name, avatarUrl: session.user.image ?? "" },
   };
-  const authResponse = pusherServer.authorizeChannel(socketId, channel, presenceData);
+  const authResponse = getPusherServer().authorizeChannel(socketId, channel, presenceData);
   return NextResponse.json(authResponse);
 }
